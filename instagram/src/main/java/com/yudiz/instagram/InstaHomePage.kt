@@ -1,10 +1,12 @@
 package com.yudiz.instagram
 
-//import com.yudiz.composeui.data_provider.InstagramPostData
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,11 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yudiz.composeui.data_provider.InstagramPostData
+import com.yudiz.composeui.data_provider.instaPostList
+//import com.yudiz.composeui.data_provider.InstagramPostData
 import com.yudiz.instagram.BottomNavItem.Items.items
 
 @Composable
@@ -34,19 +43,54 @@ fun InstaHomePage(
     Scaffold(
         topBar = { InstaTopBar() },
         bottomBar = {
-
-        }
+            InstaBottomBar()
+        },
+        backgroundColor = Color.Black
     ) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        RoundedProfilePic(
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+                    items(items = (1..10).toList()) {
+                        InstaStory(
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+                }
+            }
 
+            items(items = instaPostList) {
+                InstaPosts(data = it)
+            }
+        }
     }
+}
+
+
+@Preview
+@Composable
+fun InstaHomePagePreview() {
+    InstaHomePage()
 }
 
 @Composable
 fun InstaPosts(
     modifier: Modifier = Modifier,
-//    data: InstagramPostData
+    data: InstagramPostData
 ) {
     var isLiked by remember(0) {
+        mutableStateOf(false)
+    }
+    var isBookmarked by remember(0) {
         mutableStateOf(false)
     }
     Column(
@@ -68,7 +112,7 @@ fun InstaPosts(
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    text = "Sundar Pichai",
+                    text = data.author,
                     color = Color.White,
                     fontFamily = FontFamily.SansSerif,
                     fontSize = 16.sp,
@@ -102,7 +146,7 @@ fun InstaPosts(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 6.dp)
                 .fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -122,23 +166,123 @@ fun InstaPosts(
             }
 
             IconButton(
-                onClick = {  },
+                onClick = { },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_insta_comment),
                     contentDescription = "Comment",
                     tint = Color.White,
-                    modifier = Modifier.size(33.dp)
+                    modifier = Modifier.size(36.dp)
                 )
             }
+
+            IconButton(
+                onClick = { },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_insta_send),
+                    contentDescription = "Send",
+                    tint = Color.White,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                IconButton(
+                    onClick = { isBookmarked = !isBookmarked },
+                ) {
+                    Icon(
+                        painter = if (isBookmarked) {
+                            painterResource(id = R.drawable.ic_insta_bookmarked_fillded)
+                        } else {
+                            painterResource(id = R.drawable.ic_insta_bookmarked_outlined)
+                        },
+                        contentDescription = "Like",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
         }
+
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RoundedProfilePic(
+                modifier = Modifier.size(18.dp)
+            )
+            Text(
+                text = buildAnnotatedString {
+                    append("Liked by ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Mark Zukerberg, Elon Musk")
+                    }
+                    append(" and ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("12,12,123 others")
+                    }
+                },
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        // if caption is there
+        if (data.caption.isNotEmpty()) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(data.author)
+                    }
+                    append(" ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(data.caption)
+                    }
+                },
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 2.dp),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Text(
+            text = "View all 140000 Comments",
+            color = Color.LightGray,
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 2.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            text = data.time,
+            color = Color.LightGray,
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 0.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun InstaPostsPreview() {
-    InstaPosts()
+    InstaPosts(
+        data = InstagramPostData(
+            id = 1,
+            painter = R.drawable.sundar_pichai_profile,
+            author = "Sundar Pichai",
+            authorHasStory = false,
+            authorImage = R.drawable.sundar_pichai_profile,
+            caption = "Wear your failures as a badge of honor.",
+            time = "15 Minutes Ago"
+        )
+    )
 }
 
 @Composable
@@ -230,7 +374,7 @@ fun InstaTopBar(modifier: Modifier = Modifier) {
                     painter = painterResource(id = R.drawable.ic_insta_text),
                     contentDescription = "Instagram",
                     colorFilter = ColorFilter.tint(color = Color.White),
-                    modifier = Modifier.padding(4.dp)
+                    modifier = Modifier.padding(6.dp)
                 )
 
                 Row(
@@ -239,7 +383,7 @@ fun InstaTopBar(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Image(
-                        modifier = Modifier.size(28.dp),
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(id = R.drawable.ic_insta_add_post),
                         contentDescription = "Add Post",
                         colorFilter = ColorFilter.tint(color = Color.White)
@@ -248,7 +392,7 @@ fun InstaTopBar(modifier: Modifier = Modifier) {
                     Spacer(modifier = Modifier.width(24.dp))
 
                     Image(
-                        modifier = Modifier.size(28.dp),
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(id = R.drawable.ic_insta_messenger),
                         contentDescription = "Messages",
                         colorFilter = ColorFilter.tint(color = Color.White)
