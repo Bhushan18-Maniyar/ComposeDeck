@@ -1,6 +1,7 @@
 package com.yudiz.instagram
 
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.mutableStateOf
 
 sealed class BottomNavItem(val route: String, var label: String, @DrawableRes val icon: Int) {
     object Home : BottomNavItem("insta_home", "Home", R.drawable.ic_insta_home)
@@ -13,5 +14,8 @@ sealed class BottomNavItem(val route: String, var label: String, @DrawableRes va
         val items = listOf(
             Home, Explore, Reels, Activity, Profile
         )
+    }
+    object CurrentInstaScreen{
+        val currentInstaScreen = mutableStateOf("insta_home")
     }
 }
