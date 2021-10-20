@@ -3,7 +3,6 @@ package com.yudiz.instagram
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.glide.rememberGlidePainter
-import com.yudiz.composeui.data_provider.instaPostList
+import com.yudiz.dataprovider.data_provider.instaPostList
 import com.yudiz.instagram.components.*
 
 @Composable

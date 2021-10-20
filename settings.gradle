@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 rootProject.name = "ComposeUI"
 include ':app'
 include ':instagram'
+include ':DataProvider'

@@ -35,12 +35,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.glide.rememberGlidePainter
-import com.yudiz.composeui.data_provider.instaPostList
+import com.yudiz.dataprovider.data_provider.instaPostList
 import com.yudiz.instagram.components.InstaOutlinedButton
 import com.yudiz.instagram.components.ProfileStoryHighlight
 import com.yudiz.instagram.components.RoundedProfilePic
 import java.lang.Float.min
+import com.yudiz.dataprovider.R as RR
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -155,7 +155,7 @@ fun InstaTopSection(
                 items(items = instaPostList) { postItem ->
                     ProfileStoryHighlight(
                         modifier = Modifier.size(60.dp),
-                        painter = painterResource(id = postItem.authorImage),
+                        painter = painterResource(id = postItem.authorImageId),
                         highlightedText = postItem.author
                     )
                 }
@@ -194,7 +194,7 @@ fun GridPosts(
     ) {
         items(items = (1..30).toList()) {
             Image(
-                painter = painterResource(id = R.drawable.mark_zuckerberg_profile),
+                painter = painterResource(id = RR.drawable.mark_zuckerberg_profile),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -290,7 +290,7 @@ fun ProfileTopSection(
     ) {
         RoundedProfilePic(
             modifier = Modifier.size(90.dp),
-            profilePic = painterResource(id = R.drawable.mark_zuckerberg_profile)
+            profilePic = painterResource(id = RR.drawable.mark_zuckerberg_profile)
         )
         Spacer(modifier = Modifier.width(20.dp))
         Row(

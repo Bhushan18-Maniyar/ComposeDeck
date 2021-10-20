@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.glide.rememberGlidePainter
-import com.yudiz.composeui.data_provider.InstagramPostData
+import com.yudiz.dataprovider.data_provider.InstagramPostData
 import com.yudiz.instagram.R
-import com.yudiz.composeui.R as RR
+import com.yudiz.dataprovider.R as RR
 
 
 @Composable
@@ -226,7 +226,7 @@ fun InstaPosts(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(400.dp),
-            painter = rememberGlidePainter(data.authorImage),
+            painter = rememberGlidePainter(data.authorImageId),
             contentDescription = "Post",
             contentScale = ContentScale.Crop
         )
@@ -377,7 +377,7 @@ fun InstaPostsPreview() {
             painter = R.drawable.sundar_pichai_profile,
             author = "Sundar Pichai",
             authorHasStory = false,
-            authorImage = R.drawable.sundar_pichai_profile,
+            authorImageId = R.drawable.sundar_pichai_profile,
             caption = "Wear your failures as a badge of honor.",
             time = "15 Minutes Ago"
         )
