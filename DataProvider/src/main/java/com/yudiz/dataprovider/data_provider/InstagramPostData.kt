@@ -11,7 +11,8 @@ data class InstagramPostData(
     val time: String,
     @DrawableRes val authorImageId: Int,
     val authorHasStory: Boolean,
-    val likedBy: List<User> = emptyList()
+    val likedBy: List<User> = emptyList(),
+    var isLiked: Boolean = false
 )
 
 data class User(

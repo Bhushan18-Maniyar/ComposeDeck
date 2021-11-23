@@ -34,13 +34,21 @@ fun InstaNavigation(
         topBar = {
             when (currentInstaScreen) {
                 "insta_home" -> {
-                    InstaHomeScreenTopBar()
+                    InstaHomeScreenTopBar(
+                        modifier = Modifier,
+                        addPostClick = {},
+                        messagesClick = {}
+                    )
                 }
                 "insta_profile" -> {
                     InstaProfileTopBar()
                 }
                 else -> {
-                    InstaHomeScreenTopBar()
+                    InstaHomeScreenTopBar(
+                        modifier = Modifier,
+                        addPostClick = {},
+                        messagesClick = {}
+                    )
                 }
             }
         },

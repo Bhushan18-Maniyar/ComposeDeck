@@ -1,9 +1,14 @@
 package com.yudiz.instagram.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -35,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.glide.rememberGlidePainter
 import com.yudiz.dataprovider.data_provider.InstagramPostData
 import com.yudiz.instagram.R
+import kotlinx.coroutines.delay
 import com.yudiz.dataprovider.R as RR
 
 
@@ -108,7 +115,11 @@ fun InstaStoryPreview() {
 
 
 @Composable
-fun InstaHomeScreenTopBar(modifier: Modifier = Modifier) {
+fun InstaHomeScreenTopBar(
+    modifier: Modifier = Modifier,
+    addPostClick: () -> Unit,
+    messagesClick: () -> Unit,
+) {
     TopAppBar(
         modifier = modifier,
         elevation = 8.dp,
@@ -121,38 +132,39 @@ fun InstaHomeScreenTopBar(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_insta_text),
                     contentDescription = "Instagram",
                     colorFilter = ColorFilter.tint(color = Color.White),
                     modifier = Modifier
-                        .padding(6.dp)
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
                 )
 
                 Row(
                     horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .fillMaxHeight()
                         .padding(end = 8.dp)
                 ) {
-                    Image(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_insta_add_post),
-                        contentDescription = "Add Post",
-                        colorFilter = ColorFilter.tint(color = Color.White)
-                    )
+                    IconButton(onClick = addPostClick) {
+                        Image(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_insta_add_post),
+                            contentDescription = "Add Post",
+                            colorFilter = ColorFilter.tint(color = Color.White)
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.width(24.dp))
 
-                    Image(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_insta_messenger),
-                        contentDescription = "Messages",
-                        colorFilter = ColorFilter.tint(color = Color.White)
-                    )
+                    IconButton(onClick = messagesClick) {
+                        Image(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.ic_insta_messenger),
+                            contentDescription = "Messages",
+                            colorFilter = ColorFilter.tint(color = Color.White)
+                        )
+                    }
                 }
             }
         }
@@ -162,7 +174,7 @@ fun InstaHomeScreenTopBar(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun InstaHomeScreenTopBarPreview() {
-    InstaHomeScreenTopBar()
+    InstaHomeScreenTopBar(modifier = Modifier, {}, {})
 }
 
 
@@ -222,15 +234,28 @@ fun InstaPosts(
             )
         }
 
-        Image(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(400.dp),
-            painter = rememberGlidePainter(data.authorImageId),
-            contentDescription = "Post",
-            contentScale = ContentScale.Crop
-        )
-
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                isLiked = true
+                            }
+                        )
+                    },
+                painter = rememberGlidePainter(data.authorImageId),
+                contentDescription = "Post",
+                contentScale = ContentScale.Crop
+            )
+            DoubleTapHeartLikeAnimation(isLiked, modifier = Modifier.align(Alignment.Center))
+        }
         Spacer(modifier = Modifier.height(4.dp))
 
         Row(
@@ -366,6 +391,44 @@ fun InstaPosts(
             overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+
+@Composable
+fun DoubleTapHeartLikeAnimation(
+    isLike: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    var removeLikeIcon by remember {
+        mutableStateOf(false)
+    }
+    if (isLike) {
+        LaunchedEffect(key1 = removeLikeIcon, block = {
+            delay(1000)
+            removeLikeIcon = true
+        })
+    }
+    val animatedSize by animateDpAsState(
+        targetValue = if (isLike) 80.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = 500f
+        )
+    )
+    AnimatedVisibility(visible = !removeLikeIcon) {
+        Icon(
+            imageVector = Icons.Filled.Favorite,
+            modifier = modifier.size(animatedSize),
+            contentDescription = "Like",
+            tint = Color.White
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DoubleTapHeartLikeAnimationPreview() {
+    DoubleTapHeartLikeAnimation(true)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
