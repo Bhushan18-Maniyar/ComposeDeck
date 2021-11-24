@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -41,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.glide.rememberGlidePainter
 import com.yudiz.dataprovider.data_provider.InstagramPostData
 import com.yudiz.instagram.R
-import kotlinx.coroutines.delay
 import com.yudiz.dataprovider.R as RR
 
 
@@ -399,26 +401,24 @@ fun DoubleTapHeartLikeAnimation(
     isLike: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    var removeLikeIcon by remember {
-        mutableStateOf(false)
-    }
-    if (isLike) {
-        LaunchedEffect(key1 = removeLikeIcon, block = {
-            delay(1000)
-            removeLikeIcon = true
-        })
-    }
+    val targetSize = 100.dp
     val animatedSize by animateDpAsState(
-        targetValue = if (isLike) 80.dp else 0.dp,
+        targetValue = if (isLike) targetSize else 0.dp,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = 500f
         )
     )
-    AnimatedVisibility(visible = !removeLikeIcon) {
+    AnimatedVisibility(
+        visible = animatedSize != targetSize,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         Icon(
             imageVector = Icons.Filled.Favorite,
-            modifier = modifier.size(animatedSize),
+            modifier = modifier
+                .size(animatedSize)
+                .alpha(0.9f),
             contentDescription = "Like",
             tint = Color.White
         )

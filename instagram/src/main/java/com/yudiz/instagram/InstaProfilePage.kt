@@ -35,6 +35,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.glide.rememberGlidePainter
 import com.yudiz.dataprovider.data_provider.instaPostList
 import com.yudiz.instagram.components.InstaOutlinedButton
 import com.yudiz.instagram.components.ProfileStoryHighlight
@@ -155,7 +156,7 @@ fun InstaTopSection(
                 items(items = instaPostList) { postItem ->
                     ProfileStoryHighlight(
                         modifier = Modifier.size(60.dp),
-                        painter = painterResource(id = postItem.authorImageId),
+                        painter = rememberGlidePainter(postItem.authorImageId),
                         highlightedText = postItem.author
                     )
                 }
