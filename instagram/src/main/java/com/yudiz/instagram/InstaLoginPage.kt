@@ -1,5 +1,6 @@
 package com.yudiz.instagram
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -71,7 +72,9 @@ fun InstaLoginPage(
                 .verticalScroll(rememberScrollState())
         )
         BottomLoginContent(
-            modifier = Modifier.height(50.dp), onClick = {}
+            modifier = Modifier.height(50.dp), onClick = {
+                Log.e("TAG", "MiddleLoginContent: Click")
+            }
         )
     }
 }
@@ -122,8 +125,7 @@ fun MiddleLoginContent(
             contentDescription = "Instagram Logo",
             colorFilter = ColorFilter.tint(color = Color(0xFF1B1B1B)),
             modifier = Modifier
-                .height(66.dp)
-                .fillMaxWidth()
+                .height(60.dp)
                 .align(Alignment.CenterHorizontally),
             contentScale = ContentScale.FillHeight
         )
@@ -172,7 +174,7 @@ fun MiddleLoginContent(
             text = "Log In",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
+                .height(50.dp)
         )
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -182,10 +184,10 @@ fun MiddleLoginContent(
             clickableText = "Get help logging in.",
             clickableTextColor = Color(0xFF001597),
             onClick = {
-
+                Log.e("TAG", "MiddleLoginContent: Click")
             })
 
-        Spacer(modifier = Modifier.height(22.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -395,13 +397,9 @@ fun AnnotatedClickableText(
                 tag = clickableText,// tag which you used in the buildAnnotatedString
                 start = offset,
                 end = offset
-            ).let {
-                if (it.isNotEmpty()) {
-                    it[0].let {
-                        //do your stuff when it gets clicked
-                        onClick.invoke()
-                    }
-                }
+            ).firstOrNull()?.let {
+                //do your stuff when it gets clicked
+                onClick.invoke()
             }
         }
     )
